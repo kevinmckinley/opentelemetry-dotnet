@@ -14,6 +14,7 @@
 // limitations under the License.
 // </copyright>
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace OpenTelemetry.Trace
@@ -38,13 +39,24 @@ namespace OpenTelemetry.Trace
         }
 
         /// <inheritdoc />
-        public override SamplingResult ShouldSample(in SamplingParameters samplingParameters)
+        public override SamplingResult ShouldSample(
+            in ActivityContext parentContext,
+            in ActivityTraceId traceId,
+            in string name,
+            in ActivityKind kind,
+            in IEnumerable<KeyValuePair<string, object>> tags = null, // TODO: Empty
+            in IEnumerable<ActivityLink> links = null)
         {
-            var parentContext = samplingParameters.ParentContext;
             if (parentContext.TraceId == default)
             {
                 // If no parent, use the rootSampler to determine sampling.
-                return this.rootSampler.ShouldSample(samplingParameters);
+                return this.rootSampler.ShouldSample(
+                    parentContext,
+                    traceId,
+                    name,
+                    kind,
+                    tags,
+                    links);
             }
 
             // If the parent is sampled keep the sampling decision.
@@ -53,13 +65,13 @@ namespace OpenTelemetry.Trace
                 return new SamplingResult(SamplingDecision.RecordAndSample);
             }
 
-            if (samplingParameters.Links != null)
+            if (links != null)
             {
                 // If any linked context is sampled keep the sampling decision.
                 // TODO: This is not mentioned in the spec.
                 // Follow up with spec to see if context from Links
                 // must be used in ParentBasedSampler.
-                foreach (var parentLink in samplingParameters.Links)
+                foreach (var parentLink in links)
                 {
                     if ((parentLink.Context.TraceFlags & ActivityTraceFlags.Recorded) != 0)
                     {

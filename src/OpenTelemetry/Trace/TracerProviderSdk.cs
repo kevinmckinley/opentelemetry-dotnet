@@ -264,15 +264,13 @@ namespace OpenTelemetry.Trace
             in ActivityCreationOptions<ActivityContext> options,
             Sampler sampler)
         {
-            var samplingParameters = new SamplingParameters(
+            var shouldSample = sampler.ShouldSample(
                 options.Parent,
                 options.TraceId,
                 options.Name,
                 options.Kind,
                 options.Tags,
                 options.Links);
-
-            var shouldSample = sampler.ShouldSample(samplingParameters);
 
             var activitySamplingResult = shouldSample.Decision switch
             {

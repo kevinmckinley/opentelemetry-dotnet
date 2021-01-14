@@ -15,13 +15,21 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using OpenTelemetry.Trace;
 
 internal class MySampler : Sampler
 {
-    public override SamplingResult ShouldSample(in SamplingParameters param)
+    public override SamplingResult ShouldSample(
+            in ActivityContext parentContext,
+            in ActivityTraceId traceId,
+            in string name,
+            in ActivityKind kind,
+            in IEnumerable<KeyValuePair<string, object>> tags = null, // TODO: Empty
+            in IEnumerable<ActivityLink> links = null)
     {
-        Console.WriteLine($"MySampler.ShouldSample({param.Name})");
+        Console.WriteLine($"MySampler.ShouldSample({name})");
         return new SamplingResult(SamplingDecision.RecordAndSample);
     }
 }

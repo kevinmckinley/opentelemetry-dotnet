@@ -177,7 +177,7 @@ abstract OpenTelemetry.Metrics.BoundCounterMetricSdkBase<T>.GetAggregator() -> O
 abstract OpenTelemetry.Metrics.Export.MetricExporter.ExportAsync(System.Collections.Generic.IEnumerable<OpenTelemetry.Metrics.Export.Metric> metrics, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<OpenTelemetry.Metrics.Export.MetricExporter.ExportResult>
 abstract OpenTelemetry.Metrics.Export.MetricProcessor.FinishCollectionCycle(out System.Collections.Generic.IEnumerable<OpenTelemetry.Metrics.Export.Metric> metrics) -> void
 abstract OpenTelemetry.Metrics.Export.MetricProcessor.Process(OpenTelemetry.Metrics.Export.Metric metric) -> void
-abstract OpenTelemetry.Trace.Sampler.ShouldSample(in OpenTelemetry.Trace.SamplingParameters samplingParameters) -> OpenTelemetry.Trace.SamplingResult
+abstract OpenTelemetry.Trace.Sampler.ShouldSample(in System.Diagnostics.ActivityContext parentContext, in System.Diagnostics.ActivityTraceId traceId, in string name, in System.Diagnostics.ActivityKind kind, in System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> tags = null, in System.Collections.Generic.IEnumerable<System.Diagnostics.ActivityLink> links = null) -> OpenTelemetry.Trace.SamplingResult
 override OpenTelemetry.BaseExportProcessor<T>.Dispose(bool disposing) -> void
 override OpenTelemetry.BaseExportProcessor<T>.OnShutdown(int timeoutMilliseconds) -> bool
 override OpenTelemetry.BatchExportProcessor<T>.OnExport(T data) -> void
@@ -215,12 +215,12 @@ override OpenTelemetry.Metrics.Aggregators.Int64MeasureMinMaxSumCountAggregator.
 override OpenTelemetry.Metrics.Export.UngroupedBatcher.FinishCollectionCycle(out System.Collections.Generic.IEnumerable<OpenTelemetry.Metrics.Export.Metric> metrics) -> void
 override OpenTelemetry.Metrics.Export.UngroupedBatcher.Process(OpenTelemetry.Metrics.Export.Metric metric) -> void
 override OpenTelemetry.SimpleExportProcessor<T>.OnExport(T data) -> void
-override OpenTelemetry.Trace.AlwaysOffSampler.ShouldSample(in OpenTelemetry.Trace.SamplingParameters samplingParameters) -> OpenTelemetry.Trace.SamplingResult
-override OpenTelemetry.Trace.AlwaysOnSampler.ShouldSample(in OpenTelemetry.Trace.SamplingParameters samplingParameters) -> OpenTelemetry.Trace.SamplingResult
-override OpenTelemetry.Trace.ParentBasedSampler.ShouldSample(in OpenTelemetry.Trace.SamplingParameters samplingParameters) -> OpenTelemetry.Trace.SamplingResult
+override OpenTelemetry.Trace.AlwaysOffSampler.ShouldSample(in System.Diagnostics.ActivityContext parentContext, in System.Diagnostics.ActivityTraceId traceId, in string name, in System.Diagnostics.ActivityKind kind, in System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> tags = null, in System.Collections.Generic.IEnumerable<System.Diagnostics.ActivityLink> links = null) -> OpenTelemetry.Trace.SamplingResult
+override OpenTelemetry.Trace.AlwaysOnSampler.ShouldSample(in System.Diagnostics.ActivityContext parentContext, in System.Diagnostics.ActivityTraceId traceId, in string name, in System.Diagnostics.ActivityKind kind, in System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> tags = null, in System.Collections.Generic.IEnumerable<System.Diagnostics.ActivityLink> links = null) -> OpenTelemetry.Trace.SamplingResult
+override OpenTelemetry.Trace.ParentBasedSampler.ShouldSample(in System.Diagnostics.ActivityContext parentContext, in System.Diagnostics.ActivityTraceId traceId, in string name, in System.Diagnostics.ActivityKind kind, in System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> tags = null, in System.Collections.Generic.IEnumerable<System.Diagnostics.ActivityLink> links = null) -> OpenTelemetry.Trace.SamplingResult
 override OpenTelemetry.Trace.SamplingResult.Equals(object obj) -> bool
 override OpenTelemetry.Trace.SamplingResult.GetHashCode() -> int
-override OpenTelemetry.Trace.TraceIdRatioBasedSampler.ShouldSample(in OpenTelemetry.Trace.SamplingParameters samplingParameters) -> OpenTelemetry.Trace.SamplingResult
+override OpenTelemetry.Trace.TraceIdRatioBasedSampler.ShouldSample(in System.Diagnostics.ActivityContext parentContext, in System.Diagnostics.ActivityTraceId traceId, in string name, in System.Diagnostics.ActivityKind kind, in System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> tags = null, in System.Collections.Generic.IEnumerable<System.Diagnostics.ActivityLink> links = null) -> OpenTelemetry.Trace.SamplingResult
 abstract OpenTelemetry.BaseExportProcessor<T>.OnExport(T data) -> void
 override sealed OpenTelemetry.BaseExportProcessor<T>.OnEnd(T data) -> void
 override sealed OpenTelemetry.BaseExportProcessor<T>.OnStart(T data) -> void

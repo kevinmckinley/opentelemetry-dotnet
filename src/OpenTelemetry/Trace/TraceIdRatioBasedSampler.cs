@@ -15,6 +15,8 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace OpenTelemetry.Trace
@@ -65,7 +67,13 @@ namespace OpenTelemetry.Trace
         }
 
         /// <inheritdoc />
-        public override SamplingResult ShouldSample(in SamplingParameters samplingParameters)
+        public override SamplingResult ShouldSample(
+            in ActivityContext parentContext,
+            in ActivityTraceId traceId,
+            in string name,
+            in ActivityKind kind,
+            in IEnumerable<KeyValuePair<string, object>> tags = null, // TODO: Empty
+            in IEnumerable<ActivityLink> links = null)
         {
             // Always sample if we are within probability range. This is true even for child activities (that
             // may have had a different sampling decision made) to allow for different sampling policies,
@@ -75,7 +83,7 @@ namespace OpenTelemetry.Trace
             // This is considered a reasonable trade-off for the simplicity/performance requirements (this
             // code is executed in-line for every Activity creation).
             Span<byte> traceIdBytes = stackalloc byte[16];
-            samplingParameters.TraceId.CopyTo(traceIdBytes);
+            traceId.CopyTo(traceIdBytes);
             return new SamplingResult(Math.Abs(GetLowerLong(traceIdBytes)) < this.idUpperBound);
         }
 

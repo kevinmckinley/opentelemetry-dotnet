@@ -29,38 +29,36 @@ namespace OpenTelemetry.Trace.Tests
             // No parent, use delegate sampler.
             Assert.Equal(
                 new SamplingResult(SamplingDecision.RecordAndSample),
-                this.parentBasedOnSampler.ShouldSample(default));
+                this.parentBasedOnSampler.ShouldSample(default, default, default, default, default, default));
 
             // No parent, use delegate sampler.
             Assert.Equal(
                 new SamplingResult(SamplingDecision.Drop),
-                this.parentBasedOffSampler.ShouldSample(default));
+                this.parentBasedOffSampler.ShouldSample(default, default, default, default, default, default));
 
             // Not sampled parent, don't sample.
             Assert.Equal(
                 new SamplingResult(SamplingDecision.Drop),
                 this.parentBasedOnSampler.ShouldSample(
-                    new SamplingParameters(
                         parentContext: new ActivityContext(
                             ActivityTraceId.CreateRandom(),
                             ActivitySpanId.CreateRandom(),
                             ActivityTraceFlags.None),
                         traceId: default,
                         name: "Span",
-                        kind: ActivityKind.Client)));
+                        kind: ActivityKind.Client));
 
             // Sampled parent, sample.
             Assert.Equal(
                 new SamplingResult(SamplingDecision.RecordAndSample),
                 this.parentBasedOffSampler.ShouldSample(
-                    new SamplingParameters(
                         parentContext: new ActivityContext(
                             ActivityTraceId.CreateRandom(),
                             ActivitySpanId.CreateRandom(),
                             ActivityTraceFlags.Recorded),
                         traceId: default,
                         name: "Span",
-                        kind: ActivityKind.Client)));
+                        kind: ActivityKind.Client));
         }
 
         [Fact]
@@ -93,23 +91,21 @@ namespace OpenTelemetry.Trace.Tests
             Assert.Equal(
                 new SamplingResult(SamplingDecision.Drop),
                 this.parentBasedOnSampler.ShouldSample(
-                    new SamplingParameters(
                         parentContext: notSampledParent,
                         traceId: default,
                         name: "Span",
                         kind: ActivityKind.Client,
-                        links: notSampledLink)));
+                        links: notSampledLink));
 
             // Sampled link, sample.
             Assert.Equal(
                 new SamplingResult(SamplingDecision.RecordAndSample),
                 this.parentBasedOffSampler.ShouldSample(
-                    new SamplingParameters(
                         parentContext: notSampledParent,
                         traceId: default,
                         name: "Span",
                         kind: ActivityKind.Client,
-                        links: sampledLink)));
+                        links: sampledLink));
         }
     }
 }

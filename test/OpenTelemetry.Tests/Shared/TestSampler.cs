@@ -15,20 +15,33 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Tests
 {
     internal class TestSampler : Sampler
     {
-        public Func<SamplingParameters, SamplingResult> SamplingAction { get; set; }
+        public Func<ActivityContext,
+            ActivityTraceId,
+            string,
+            ActivityKind,
+            IEnumerable<KeyValuePair<string, object>>,
+            IEnumerable<ActivityLink>, SamplingResult> SamplingAction { get; set; }
 
         public SamplingParameters LatestSamplingParameters { get; private set; }
 
-        public override SamplingResult ShouldSample(in SamplingParameters samplingParameters)
+        public override SamplingResult ShouldSample(
+            in ActivityContext parentContext,
+            in ActivityTraceId traceId,
+            in string name,
+            in ActivityKind kind,
+            in IEnumerable<KeyValuePair<string, object>> tags = null, // TODO: Empty
+            in IEnumerable<ActivityLink> links = null)
         {
-            this.LatestSamplingParameters = samplingParameters;
-            return this.SamplingAction?.Invoke(samplingParameters) ?? new SamplingResult(SamplingDecision.RecordAndSample);
+            this.LatestSamplingParameters = new SamplingParameters(parentContext, traceId, name, kind, tags, links);
+            return this.SamplingAction?.Invoke(parentContext, traceId, name, kind, tags, links) ?? new SamplingResult(SamplingDecision.RecordAndSample);
         }
     }
 }

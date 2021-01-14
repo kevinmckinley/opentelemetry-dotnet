@@ -109,7 +109,7 @@ namespace OpenTelemetry.Trace.Tests
         public void TracerProviderSdkSamplerAttributesAreAppliedToActivity(SamplingDecision sampling)
         {
             var testSampler = new TestSampler();
-            testSampler.SamplingAction = (samplingParams) =>
+            testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 var attributes = new Dictionary<string, object>();
                 attributes.Add("tagkeybysampler", "tagvalueaddedbysampler");
@@ -143,7 +143,7 @@ namespace OpenTelemetry.Trace.Tests
                     .SetSampler(testSampler)
                     .Build();
 
-            testSampler.SamplingAction = (samplingParameters) =>
+            testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 return new SamplingResult(SamplingDecision.RecordAndSample);
             };
@@ -155,7 +155,7 @@ namespace OpenTelemetry.Trace.Tests
                 Assert.True(activity.Recorded);
             }
 
-            testSampler.SamplingAction = (samplingParameters) =>
+            testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 return new SamplingResult(SamplingDecision.RecordOnly);
             };
@@ -169,7 +169,7 @@ namespace OpenTelemetry.Trace.Tests
                 Assert.False(activity.Recorded);
             }
 
-            testSampler.SamplingAction = (samplingParameters) =>
+            testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 return new SamplingResult(SamplingDecision.Drop);
             };
@@ -236,7 +236,7 @@ namespace OpenTelemetry.Trace.Tests
                         .SetSampler(testSampler)
                         .Build();
 
-            testSampler.SamplingAction = (samplingParameters) =>
+            testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 return new SamplingResult(SamplingDecision.Drop);
             };

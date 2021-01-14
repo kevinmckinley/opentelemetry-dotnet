@@ -14,6 +14,9 @@
 // limitations under the License.
 // </copyright>
 
+using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace OpenTelemetry.Trace
 {
     /// <summary>
@@ -22,7 +25,13 @@ namespace OpenTelemetry.Trace
     public sealed class AlwaysOnSampler : Sampler
     {
         /// <inheritdoc />
-        public override SamplingResult ShouldSample(in SamplingParameters samplingParameters)
+        public override SamplingResult ShouldSample(
+            in ActivityContext parentContext,
+            in ActivityTraceId traceId,
+            in string name,
+            in ActivityKind kind,
+            in IEnumerable<KeyValuePair<string, object>> tags = null, // TODO: Empty
+            in IEnumerable<ActivityLink> links = null)
         {
             return new SamplingResult(SamplingDecision.RecordAndSample);
         }

@@ -73,7 +73,7 @@ namespace OpenTelemetry.Trace.Tests
         [InlineData(SamplingDecision.RecordAndSample)]
         public void ActivitySourceAdapterCallsStartStopActivityProcessor1(SamplingDecision decision)
         {
-            this.testSampler.SamplingAction = (samplingParameters) =>
+            this.testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 return new SamplingResult(decision);
             };
@@ -114,7 +114,7 @@ namespace OpenTelemetry.Trace.Tests
         [InlineData(false)]
         public void ActivitySourceAdapterCallsStartStopActivityProcessor2(bool isSampled)
         {
-            this.testSampler.SamplingAction = (samplingParameters) =>
+            this.testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 return new SamplingResult(isSampled);
             };
@@ -155,7 +155,7 @@ namespace OpenTelemetry.Trace.Tests
         [InlineData(SamplingDecision.RecordAndSample)]
         public void ActivitySourceAdapterPopulatesSamplingAttributesToActivity(SamplingDecision sampling)
         {
-            this.testSampler.SamplingAction = (samplingParams) =>
+            this.testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
                 var attributes = new Dictionary<string, object>();
                 attributes.Add("tagkeybysampler", "tagvalueaddedbysampler");
@@ -176,9 +176,9 @@ namespace OpenTelemetry.Trace.Tests
         [Fact]
         public void ActivitySourceAdapterPopulatesSamplingParamsCorrectlyForRootActivity()
         {
-            this.testSampler.SamplingAction = (samplingParameters) =>
+            this.testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
-                Assert.Equal(default, samplingParameters.ParentContext);
+                Assert.Equal(default, parentContext);
                 return new SamplingResult(SamplingDecision.RecordAndSample);
             };
 
@@ -202,12 +202,12 @@ namespace OpenTelemetry.Trace.Tests
             string remoteParentId = $"00-{parentTraceId}-{parentSpanId}-{parentTraceFlag}";
             string tracestate = "a=b;c=d";
 
-            this.testSampler.SamplingAction = (samplingParameters) =>
+            this.testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
-                Assert.Equal(parentTraceId, samplingParameters.ParentContext.TraceId);
-                Assert.Equal(parentSpanId, samplingParameters.ParentContext.SpanId);
-                Assert.Equal(traceFlags, samplingParameters.ParentContext.TraceFlags);
-                Assert.Equal(tracestate, samplingParameters.ParentContext.TraceState);
+                Assert.Equal(parentTraceId, parentContext.TraceId);
+                Assert.Equal(parentSpanId, parentContext.SpanId);
+                Assert.Equal(traceFlags, parentContext.TraceFlags);
+                Assert.Equal(tracestate, parentContext.TraceState);
                 return new SamplingResult(SamplingDecision.RecordAndSample);
             };
 
@@ -234,13 +234,13 @@ namespace OpenTelemetry.Trace.Tests
             activityLocalParent.TraceStateString = tracestate;
             activityLocalParent.Start();
 
-            this.testSampler.SamplingAction = (samplingParameters) =>
+            this.testSampler.SamplingAction = (parentContext, traceId, name, kind, tags, links) =>
             {
-                Assert.Equal(activityLocalParent.TraceId, samplingParameters.ParentContext.TraceId);
-                Assert.Equal(activityLocalParent.SpanId, samplingParameters.ParentContext.SpanId);
-                Assert.Equal(activityLocalParent.ActivityTraceFlags, samplingParameters.ParentContext.TraceFlags);
-                Assert.Equal(tracestate, samplingParameters.ParentContext.TraceState);
-                Assert.Equal(ActivityKind.Client, samplingParameters.Kind);
+                Assert.Equal(activityLocalParent.TraceId, parentContext.TraceId);
+                Assert.Equal(activityLocalParent.SpanId, parentContext.SpanId);
+                Assert.Equal(activityLocalParent.ActivityTraceFlags, parentContext.TraceFlags);
+                Assert.Equal(tracestate, parentContext.TraceState);
+                Assert.Equal(ActivityKind.Client, kind);
                 return new SamplingResult(SamplingDecision.RecordAndSample);
             };
 

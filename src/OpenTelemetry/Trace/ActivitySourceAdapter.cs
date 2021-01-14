@@ -154,15 +154,13 @@ namespace OpenTelemetry.Trace
                     isRemote: true);
             }
 
-            var samplingParameters = new SamplingParameters(
+            var samplingResult = this.sampler.ShouldSample(
                 parentContext,
                 activity.TraceId,
                 activity.DisplayName,
                 activity.Kind,
                 activity.TagObjects,
                 activity.Links);
-
-            var samplingResult = this.sampler.ShouldSample(samplingParameters);
 
             switch (samplingResult.Decision)
             {
